@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { logout } from "@/routes";
 
 export default function Dashboard() {
-    const { auth } = usePage().props;
+    const { auth, bitcoinUsd, walletBalance } = usePage<{
+        auth: any;
+        bitcoinUsd: number;
+        walletBalance: number;
+    }>().props;
 
     return (
         <>
@@ -33,7 +37,31 @@ export default function Dashboard() {
                 </header>
 
                 <main className="mx-auto mt-12 w-full px-10">
-                    
+                    <div className="flex flex-col">
+                        <p> 1 tbtc = ${bitcoinUsd.toFixed(2)} USD</p>
+                        <p>
+                            {" "}
+                            Balance: {walletBalance.toFixed(8)} tbtc4,{" "}
+                            {(walletBalance * bitcoinUsd).toFixed(2)} USD, Max
+                            spendable amount: {walletBalance.toFixed(8)}{" "}
+                            tbtc4{" "}
+                        </p>
+                    </div>
+
+                    <div className="mt-10 w-full gap-4">
+                        <div className="flex flex-col gap-2 border border-green-300 p-4">
+                            <h2> Send</h2>
+                            <div>
+                                <h3>Recipient Address:</h3>
+                                <input
+                                    type="text"
+                                    placeholder="Enter recipient address"
+                                    className="w-full border rounded-lg p-2"
+                                    cla
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </main>
             </div>
         </>

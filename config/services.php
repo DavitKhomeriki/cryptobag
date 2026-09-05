@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'bitgo' => [
+        'url' => env('BITGO_BASE_URL'),
+        'token' => env('BITGO_ACCESS_TOKEN'),
+        'enterprise_id' => env('BITGO_ENTERPRISE_ID'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

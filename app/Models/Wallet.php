@@ -15,7 +15,9 @@ class Wallet extends Model
 
     protected $fillable = [
         'user_id',
-        'balance',
+        'coin',
+        'bitgo_wallet_id',
+        'passphrase',
     ];
 
     public function user(): BelongsTo
