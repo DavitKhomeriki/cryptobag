@@ -8,9 +8,13 @@ type SendForm = {
 
 type SendContainerProps = {
     walletBalance: number;
+    addresses: any[];
 };
 
-export default function SendContainer({ walletBalance }: SendContainerProps) {
+export default function SendContainer({
+    walletBalance,
+    addresses,
+}: SendContainerProps) {
     const { data, setData, post, processing, errors, reset } =
         useForm<SendForm>({
             address: "",
@@ -18,6 +22,20 @@ export default function SendContainer({ walletBalance }: SendContainerProps) {
         });
 
     const amount = Number(data.amount);
+
+    const addressError = (() => {
+        if (!data.address) {
+            return "";
+        }
+
+        if (
+            addresses.length > 0 &&
+            addresses.some((a) => a.address === data.address)
+        ) {
+            return "Recipient address can not be your own address.";
+        }
+        return "";
+    })();
 
     const amountError = (() => {
         if (!data.amount) {
@@ -78,6 +96,10 @@ export default function SendContainer({ walletBalance }: SendContainerProps) {
                 {errors.address && (
                     <p className="text-sm text-red-500">{errors.address}</p>
                 )}
+
+                {addressError && (
+                    <p className="text-sm text-red-500">{addressError}</p>
+                )}
             </div>
 
             <div className="mt-2 flex w-full flex-col items-start gap-1">
@@ -101,10 +123,6 @@ export default function SendContainer({ walletBalance }: SendContainerProps) {
                         [&::-webkit-outer-spin-button]:appearance-none
                     "
                 />
-
-                {amountError && (
-                    <p className="text-sm text-red-500">{amountError}</p>
-                )}
 
                 {errors.amount && (
                     <p className="text-sm text-red-500">{errors.amount}</p>

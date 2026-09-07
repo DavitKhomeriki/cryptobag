@@ -37,7 +37,10 @@ export default function Dashboard() {
                     />
 
                     <div className="mt-10 grid grid-cols-2 w-full gap-7">
-                        <SendContainer walletBalance={walletBalance} />
+                        <SendContainer
+                            walletBalance={walletBalance}
+                            addresses={addresses.addresses}
+                        />
                         <ReceiveContainer addresses={addresses.addresses} />
                         <TransactionContainer
                             transactions={transactions}
