@@ -16,6 +16,7 @@ return [
 
     'bitgo' => [
         'url' => env('BITGO_BASE_URL'),
+        'express_url' => env('BITGO_EXPRESS_URL'),
         'token' => env('BITGO_ACCESS_TOKEN'),
         'enterprise_id' => env('BITGO_ENTERPRISE_ID'),
     ],
