@@ -1,9 +1,9 @@
-import { Head, usePage } from "@inertiajs/react";
-import Header from "@/pages/dashboard/components/Header";
-import Balance from "@/pages/dashboard/components/Balance";
-import SendContainer from "@/pages/dashboard/components/SendContainer";
-import ReceiveContainer from "@/pages/dashboard/components/ReceiveContainer";
-import TransactionContainer from "./components/TransactionContainer";
+import { Head, usePage } from '@inertiajs/react';
+import Header from '@/pages/dashboard/components/Header';
+import Balance from '@/pages/dashboard/components/Balance';
+import SendContainer from '@/pages/dashboard/components/SendContainer';
+import ReceiveContainer from '@/pages/dashboard/components/ReceiveContainer';
+import TransactionContainer from './components/TransactionContainer';
 
 export default function Dashboard() {
     const {
@@ -27,7 +27,7 @@ export default function Dashboard() {
     return (
         <>
             <Head title="Dashboard" />
-            <div className="flex flex-col bg-background text-foreground min-h-svh pt-10">
+            <div className="bg-background text-foreground flex min-h-svh flex-col pt-10">
                 <Header auth={auth} />
 
                 <main className="mx-auto mt-12 w-full px-10">
@@ -36,7 +36,7 @@ export default function Dashboard() {
                         walletBalance={walletBalance}
                     />
 
-                    <div className="mt-10 grid grid-cols-2 w-full gap-7">
+                    <div className="mt-10 grid w-full grid-cols-2 gap-7">
                         <SendContainer
                             walletBalance={walletBalance}
                             addresses={addresses.addresses}

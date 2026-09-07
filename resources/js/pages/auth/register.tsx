@@ -1,13 +1,13 @@
-import { Form, Head } from "@inertiajs/react";
-import InputError from "@/components/input-error";
-import PasswordInput from "@/components/password-input";
-import TextLink from "@/components/text-link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
-import { login } from "@/routes";
-import { store } from "@/routes/register";
+import { Form, Head } from '@inertiajs/react';
+import InputError from '@/components/input-error';
+import PasswordInput from '@/components/password-input';
+import TextLink from '@/components/text-link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
+import { login } from '@/routes';
+import { store } from '@/routes/register';
 
 type Props = {
     passwordRules: string;
@@ -19,7 +19,7 @@ export default function Register({ passwordRules }: Props) {
             <Head title="Register" />
             <Form
                 {...store.form()}
-                resetOnSuccess={["password", "password_confirmation"]}
+                resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
                 className="flex flex-col gap-6"
             >
@@ -102,7 +102,7 @@ export default function Register({ passwordRules }: Props) {
                         </div>
 
                         <div className="text-muted-foreground text-center text-sm">
-                            Already have an account?{" "}
+                            Already have an account?{' '}
                             <TextLink href={login()} tabIndex={6}>
                                 Log in
                             </TextLink>
@@ -115,6 +115,6 @@ export default function Register({ passwordRules }: Props) {
 }
 
 Register.layout = {
-    title: "Create an account",
-    description: "Enter your details below to create your account",
+    title: 'Create an account',
+    description: 'Enter your details below to create your account',
 };

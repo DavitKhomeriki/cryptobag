@@ -8,10 +8,10 @@ export default function Balance({ bitcoinUsd, walletBalance }: BalanceProps) {
         <div className="flex flex-col">
             <p> 1 tbtc = ${bitcoinUsd.toFixed(2)} USD</p>
             <p>
-                {" "}
-                Balance: {walletBalance.toFixed(8)} tbtc4,{" "}
+                {' '}
+                Balance: {walletBalance.toFixed(8)} tbtc4,{' '}
                 {(walletBalance * bitcoinUsd).toFixed(2)} USD, Max spendable
-                amount: {walletBalance.toFixed(8)} tbtc4{" "}
+                amount: {walletBalance.toFixed(8)} tbtc4{' '}
             </p>
         </div>
     );

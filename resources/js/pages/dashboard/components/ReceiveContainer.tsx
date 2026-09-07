@@ -1,6 +1,6 @@
-import { router } from "@inertiajs/react";
-import { CopyPlus, HardDriveDownloadIcon, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { router } from '@inertiajs/react';
+import { CopyPlus, HardDriveDownloadIcon, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 type ReceiveContainerProps = {
     addresses: any[];
@@ -11,7 +11,7 @@ export default function ReceiveContainer({ addresses }: ReceiveContainerProps) {
 
     const addAddress = () => {
         router.post(
-            "/dashboard/address",
+            '/dashboard/address',
             {},
             {
                 onStart: () => {
@@ -32,9 +32,9 @@ export default function ReceiveContainer({ addresses }: ReceiveContainerProps) {
                 Receive
             </h2>
 
-            <div className="mt-2 flex w-full flex-col gap-1 ">
+            <div className="mt-2 flex w-full flex-col gap-1">
                 <h3>Your Address:</h3>
-                <div className="flex flex-col max-h-35 overflow-y-auto gap-1 scrollbar-thin scrollbar-thumb-green-900 pr-1">
+                <div className="flex max-h-35 scrollbar-thin scrollbar-thumb-green-900 flex-col gap-1 overflow-y-auto pr-1">
                     {addresses.map((address: any) => (
                         <p
                             className="w-full rounded-lg border p-2"

@@ -1,5 +1,5 @@
-import { router, usePage } from "@inertiajs/react";
-import { ChevronLeft, ChevronRight, RotateCcwIcon } from "lucide-react";
+import { router, usePage } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight, RotateCcwIcon } from 'lucide-react';
 
 type TransactionContainerProps = {
     transactions: any[];
@@ -12,8 +12,8 @@ export default function TransactionContainer({
 }: TransactionContainerProps) {
     const { url } = usePage();
 
-    const params = new URLSearchParams(url.split("?")[1] ?? "");
-    const currentPage = Number(params.get("page")) || 1;
+    const params = new URLSearchParams(url.split('?')[1] ?? '');
+    const currentPage = Number(params.get('page')) || 1;
 
     const nextPage = () => {
         if (!transactionsNextCursor) {
@@ -21,7 +21,7 @@ export default function TransactionContainer({
         }
 
         router.get(
-            "/dashboard",
+            '/dashboard',
             {
                 prevId: transactionsNextCursor,
                 page: currentPage + 1,
@@ -86,7 +86,7 @@ export default function TransactionContainer({
                                                 key={transaction.id}
                                                 className="border-b border-green-900"
                                             >
-                                                <td className="pb-1 pt-3">
+                                                <td className="pt-3 pb-1">
                                                     {new Date(
                                                         transaction.createdTime,
                                                     ).toLocaleString()}

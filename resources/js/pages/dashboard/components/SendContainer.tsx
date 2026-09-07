@@ -1,7 +1,7 @@
-import InputError from "@/components/input-error";
-import type { FormEvent } from "react";
-import { useForm } from "@inertiajs/react";
-import { BanknoteIcon, IdCardIcon, SendIcon } from "lucide-react";
+import InputError from '@/components/input-error';
+import type { FormEvent } from 'react';
+import { useForm } from '@inertiajs/react';
+import { BanknoteIcon, IdCardIcon, SendIcon } from 'lucide-react';
 
 type SendForm = {
     address: string;
@@ -16,13 +16,13 @@ const MIN_SEND_AMOUNT = 0.00001;
 
 function validateAmount(value: string, walletBalance: number): string {
     if (!value) {
-        return "";
+        return '';
     }
 
     const amount = Number(value);
 
     if (!Number.isFinite(amount)) {
-        return "Amount must be a valid number.";
+        return 'Amount must be a valid number.';
     }
 
     if (amount < MIN_SEND_AMOUNT) {
@@ -33,7 +33,7 @@ function validateAmount(value: string, walletBalance: number): string {
         return `Amount cannot be greater than your balance of ${walletBalance} TBTC.`;
     }
 
-    return "";
+    return '';
 }
 
 type SendContainerProps = {
@@ -47,15 +47,15 @@ export default function SendContainer({
 }: SendContainerProps) {
     const { data, setData, post, processing, errors, reset } =
         useForm<SendForm>({
-            address: "",
-            amount: "",
+            address: '',
+            amount: '',
         });
 
     const addressError =
         data.address &&
         addresses.some((address) => address.address === data.address)
-            ? "Recipient address cannot be your own address."
-            : "";
+            ? 'Recipient address cannot be your own address.'
+            : '';
     const amountError = validateAmount(data.amount, walletBalance);
     const isDisabled =
         processing ||
@@ -71,7 +71,7 @@ export default function SendContainer({
             return;
         }
 
-        post("/dashboard", {
+        post('/dashboard', {
             preserveScroll: true,
             onSuccess: () => reset(),
         });
@@ -100,7 +100,7 @@ export default function SendContainer({
                     id="recipient-address"
                     type="text"
                     value={data.address}
-                    onChange={(e) => setData("address", e.target.value)}
+                    onChange={(e) => setData('address', e.target.value)}
                     placeholder="Enter recipient address"
                     className="w-full rounded-lg border p-2"
                 />
@@ -124,7 +124,7 @@ export default function SendContainer({
                     min={MIN_SEND_AMOUNT}
                     max={walletBalance}
                     value={data.amount}
-                    onChange={(e) => setData("amount", e.target.value)}
+                    onChange={(e) => setData('amount', e.target.value)}
                     placeholder="Enter amount in TBTC"
                     className="min-w-52 [appearance:textfield] rounded-lg border p-2 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 />
@@ -137,7 +137,7 @@ export default function SendContainer({
                 disabled={isDisabled}
                 className="mt-4 cursor-pointer rounded-sm border-2 px-4 py-2 text-sm font-medium transition duration-300 hover:bg-green-500 hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
             >
-                {processing ? "Sending..." : "Send"}
+                {processing ? 'Sending...' : 'Send'}
             </button>
         </form>
     );
