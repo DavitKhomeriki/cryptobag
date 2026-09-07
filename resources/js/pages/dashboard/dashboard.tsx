@@ -3,16 +3,26 @@ import Header from "@/pages/dashboard/components/Header";
 import Balance from "@/pages/dashboard/components/Balance";
 import SendContainer from "@/pages/dashboard/components/SendContainer";
 import ReceiveContainer from "@/pages/dashboard/components/ReceiveContainer";
+import TransactionContainer from "./components/TransactionContainer";
 
 export default function Dashboard() {
-    const { auth, bitcoinUsd, walletBalance, addresses } = usePage<{
+    const {
+        auth,
+        bitcoinUsd,
+        walletBalance,
+        addresses,
+        transactions,
+        transactionsNextCursor,
+    } = usePage<{
         auth: any;
         bitcoinUsd: number;
         walletBalance: number;
         addresses: any;
+        transactions: any;
+        transactionsNextCursor: string | null;
     }>().props;
 
-    console.log(auth, bitcoinUsd, walletBalance, addresses);
+    console.log(transactions, transactionsNextCursor);
 
     return (
         <>
@@ -29,6 +39,10 @@ export default function Dashboard() {
                     <div className="mt-10 grid grid-cols-2 w-full gap-7">
                         <SendContainer walletBalance={walletBalance} />
                         <ReceiveContainer addresses={addresses.addresses} />
+                        <TransactionContainer
+                            transactions={transactions}
+                            transactionsNextCursor={transactionsNextCursor}
+                        />
                     </div>
                 </main>
             </div>

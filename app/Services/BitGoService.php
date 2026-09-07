@@ -82,6 +82,29 @@ class BitGoService
             ->json();
     }
 
+    public function transactions(
+        Wallet $wallet,
+        int $limit = 25,
+        ?string $prevId = null,
+    ): array {
+        $query = [
+            'limit' => $limit,
+        ];
+
+        if ($prevId) {
+            $query['prevId'] = $prevId;
+        }
+
+        return Http::withToken(config('services.bitgo.token'))
+            ->get(
+                config('services.bitgo.url')
+                ."/api/v2/{$wallet->coin}/wallet/{$wallet->bitgo_wallet_id}/transfer",
+                $query
+            )
+            ->throw()
+            ->json();
+    }
+
     public function generateWallet(User $user, string $passphrase): array
     {
 

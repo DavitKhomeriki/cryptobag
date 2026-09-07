@@ -11,11 +11,20 @@ class DashboardController extends Controller
 {
     public function index(CurrencyService $currencyService, BitGoService $bitGoService)
     {
+        $userWallet = Auth::User()->wallet;
+
+        $transactions = $bitGoService->transactions(
+            $userWallet,
+            5,
+            request('prevId')
+        );
 
         return inertia('dashboard/dashboard', [
             'bitcoinUsd' => $currencyService->bitcoinUsd(),
-            'walletBalance' => $bitGoService->balance(Auth::User()->wallet),
-            'addresses' => $bitGoService->addresses(Auth::User()->wallet),
+            'walletBalance' => $bitGoService->balance($userWallet),
+            'addresses' => $bitGoService->addresses($userWallet),
+            'transactions' => $transactions['transfers'] ?? [],
+            'transactionsNextCursor' => $transactions['nextBatchPrevId'] ?? null,
         ]);
     }
 
