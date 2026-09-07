@@ -124,7 +124,7 @@ export default function TransactionContainer({
                             type="button"
                             onClick={prevPage}
                             disabled={currentPage === 1}
-                            className="flex cursor-pointer items-center gap-1 rounded-xs border px-3 py-1 transition-all duration-300 enabled:hover:border-green-400 enabled:hover:text-green-500 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex cursor-pointer items-center gap-1 rounded-xs border px-3 py-1 transition-all duration-300 enabled:hover:bg-green-500 enabled:hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <ChevronLeft className="h-4 w-4" />
                             Previous
@@ -136,7 +136,7 @@ export default function TransactionContainer({
                             type="button"
                             onClick={nextPage}
                             disabled={!transactionsNextCursor}
-                            className="flex cursor-pointer items-center gap-1 rounded-xs border px-3 py-1 transition-all duration-300 enabled:hover:border-green-400 enabled:hover:text-green-500 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex cursor-pointer items-center gap-1 rounded-xs border px-3 py-1 transition-all duration-300 enabled:hover:bg-green-500 enabled:hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             Next
                             <ChevronRight className="h-4 w-4" />
