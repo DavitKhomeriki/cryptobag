@@ -53,10 +53,10 @@
             "npm run build"
         ],
         "dev": [
-            "Composer\\Config::disableProcessTimeout",
-            "docker run --rm --platform linux/amd64 -p 3080:3080 bitgo/express:latest &",
-            "@php artisan dev"
-        ],
+    "Composer\\Config::disableProcessTimeout",
+    "docker run --rm --platform linux/amd64 -p 3080:3080 bitgo/express:latest &",
+    "@php artisan dev"
+],
         "lint": [
             "pint --parallel"
         ],

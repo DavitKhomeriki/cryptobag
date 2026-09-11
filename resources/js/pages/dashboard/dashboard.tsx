@@ -1,11 +1,11 @@
-import { Head, router, usePage } from '@inertiajs/react';
-import Header from '@/pages/dashboard/components/Header';
-import Balance from '@/pages/dashboard/components/Balance';
-import SendContainer from '@/pages/dashboard/components/SendContainer';
-import ReceiveContainer from '@/pages/dashboard/components/ReceiveContainer';
-import TransactionContainer from './components/TransactionContainer';
-import { useEffect } from 'react';
-import echo from '@/echo';
+import { Head, router, usePage } from "@inertiajs/react";
+import Header from "@/pages/dashboard/components/Header";
+import Balance from "@/pages/dashboard/components/Balance";
+import SendContainer from "@/pages/dashboard/components/SendContainer";
+import ReceiveContainer from "@/pages/dashboard/components/ReceiveContainer";
+import TransactionContainer from "./components/TransactionContainer";
+import { useEffect } from "react";
+import echo from "@/echo";
 
 export default function Dashboard() {
     const {
@@ -29,23 +29,23 @@ export default function Dashboard() {
             return;
         }
 
-        const channel = echo.private(`wallet.${auth.user.id}`);
+        const channelName = `wallet.${auth.user.id}`;
+        const channel = echo.private(channelName);
 
         const refreshWallet = () => {
             router.reload({
                 only: [
-                    'walletBalance',
-                    'transactions',
-                    'transactionsNextCursor',
+                    "walletBalance",
+                    "transactions",
+                    "transactionsNextCursor",
                 ],
             });
         };
 
-        channel.listen('.wallet.updated', refreshWallet);
-        channel.subscribed(refreshWallet);
+        channel.listen(".wallet.updated", refreshWallet);
 
         return () => {
-            echo?.leave(`wallet.${auth.user.id}`);
+            echo?.leave(channelName);
         };
     }, [auth.user.id]);
 
