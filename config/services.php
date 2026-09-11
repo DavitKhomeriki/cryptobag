@@ -15,6 +15,7 @@ return [
     */
 
     'bitgo' => [
+        'webhook_url' => env('BITGO_WEBHOOK_URL'),
         'url' => env('BITGO_BASE_URL'),
         'express_url' => env('BITGO_EXPRESS_URL'),
         'token' => env('BITGO_ACCESS_TOKEN'),

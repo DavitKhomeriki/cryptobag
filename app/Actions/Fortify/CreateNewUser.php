@@ -4,6 +4,7 @@ namespace App\Actions\Fortify;
 
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
+use App\Jobs\RegisterWalletWebhook;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletAddress;
@@ -55,6 +56,8 @@ class CreateNewUser implements CreatesNewUsers
                 'wallet_id' => $wallet->id,
                 'address' => $generatedWallet['wallet']['receiveAddress']['address'],
             ]);
+
+            RegisterWalletWebhook::dispatch($wallet->id)->afterCommit();
 
             return $user;
         });

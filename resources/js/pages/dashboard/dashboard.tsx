@@ -1,9 +1,11 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import Header from '@/pages/dashboard/components/Header';
 import Balance from '@/pages/dashboard/components/Balance';
 import SendContainer from '@/pages/dashboard/components/SendContainer';
 import ReceiveContainer from '@/pages/dashboard/components/ReceiveContainer';
 import TransactionContainer from './components/TransactionContainer';
+import { useEffect } from 'react';
+import echo from '@/echo';
 
 export default function Dashboard() {
     const {
@@ -22,7 +24,30 @@ export default function Dashboard() {
         transactionsNextCursor: string | null;
     }>().props;
 
-    console.log(transactions, transactionsNextCursor);
+    useEffect(() => {
+        if (!echo) {
+            return;
+        }
+
+        const channel = echo.private(`wallet.${auth.user.id}`);
+
+        const refreshWallet = () => {
+            router.reload({
+                only: [
+                    'walletBalance',
+                    'transactions',
+                    'transactionsNextCursor',
+                ],
+            });
+        };
+
+        channel.listen('.wallet.updated', refreshWallet);
+        channel.subscribed(refreshWallet);
+
+        return () => {
+            echo?.leave(`wallet.${auth.user.id}`);
+        };
+    }, [auth.user.id]);
 
     return (
         <>

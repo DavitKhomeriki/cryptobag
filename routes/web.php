@@ -1,10 +1,15 @@
 <?php
 
+use App\Http\Controllers\BitGoWebhookController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login')->name('home');
+
+Route::post('/api/bitgo/webhook', BitGoWebhookController::class)
+    ->middleware('throttle:60,1')
+    ->name('bitgo.webhook');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
