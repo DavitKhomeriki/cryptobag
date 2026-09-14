@@ -1,5 +1,9 @@
 {
-    "agents": ["claude_code", "codex", "opencode"],
+    "agents": [
+        "claude_code",
+        "codex",
+        "opencode"
+    ],
     "cloud": false,
     "guidelines": true,
     "mcp": true,
@@ -12,6 +16,8 @@
         "testing-best-practices",
         "wayfinder-development",
         "inertia-react-development",
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "echo-react-development",
+        "echo-development"
     ]
 }
