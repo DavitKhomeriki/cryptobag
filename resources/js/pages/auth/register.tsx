@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { useState } from 'react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -14,6 +15,8 @@ type Props = {
 };
 
 export default function Register({ passwordRules }: Props) {
+    const [accountType, setAccountType] = useState<'user' | 'merchant'>('user');
+
     return (
         <>
             <Head title="Register" />
@@ -26,6 +29,45 @@ export default function Register({ passwordRules }: Props) {
                 {({ processing, errors }) => (
                     <>
                         <div className="grid gap-6">
+                            <input
+                                type="hidden"
+                                name="account_type"
+                                value={accountType}
+                            />
+
+                            <div className="grid gap-2">
+                                <Label>Account type</Label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <Button
+                                        type="button"
+                                        variant={
+                                            accountType === 'user'
+                                                ? 'default'
+                                                : 'outline'
+                                        }
+                                        onClick={() => setAccountType('user')}
+                                        tabIndex={1}
+                                    >
+                                        User
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant={
+                                            accountType === 'merchant'
+                                                ? 'default'
+                                                : 'outline'
+                                        }
+                                        onClick={() =>
+                                            setAccountType('merchant')
+                                        }
+                                        tabIndex={2}
+                                    >
+                                        Merchant
+                                    </Button>
+                                </div>
+                                <InputError message={errors.account_type} />
+                            </div>
+
                             <div className="grid gap-2">
                                 <Label htmlFor="username">Username</Label>
                                 <Input
@@ -33,7 +75,7 @@ export default function Register({ passwordRules }: Props) {
                                     type="text"
                                     required
                                     autoFocus
-                                    tabIndex={1}
+                                    tabIndex={3}
                                     autoComplete="username"
                                     name="username"
                                     placeholder="Username"
@@ -50,7 +92,7 @@ export default function Register({ passwordRules }: Props) {
                                     id="email"
                                     type="email"
                                     required
-                                    tabIndex={2}
+                                    tabIndex={4}
                                     autoComplete="email"
                                     name="email"
                                     placeholder="email@example.com"
@@ -58,12 +100,52 @@ export default function Register({ passwordRules }: Props) {
                                 <InputError message={errors.email} />
                             </div>
 
+                            {accountType === 'merchant' && (
+                                <>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="merchant_name">
+                                            Merchant name
+                                        </Label>
+                                        <Input
+                                            id="merchant_name"
+                                            type="text"
+                                            required
+                                            tabIndex={5}
+                                            autoComplete="organization"
+                                            name="merchant_name"
+                                            placeholder="Merchant name"
+                                        />
+                                        <InputError
+                                            message={errors.merchant_name}
+                                        />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="merchant_callback_url">
+                                            Callback URL
+                                        </Label>
+                                        <Input
+                                            id="merchant_callback_url"
+                                            type="url"
+                                            tabIndex={6}
+                                            name="merchant_callback_url"
+                                            placeholder="https://example.com/webhooks/cryptobag"
+                                        />
+                                        <InputError
+                                            message={
+                                                errors.merchant_callback_url
+                                            }
+                                        />
+                                    </div>
+                                </>
+                            )}
+
                             <div className="grid gap-2">
                                 <Label htmlFor="password">Password</Label>
                                 <PasswordInput
                                     id="password"
                                     required
-                                    tabIndex={3}
+                                    tabIndex={7}
                                     autoComplete="new-password"
                                     name="password"
                                     placeholder="Password"
@@ -79,7 +161,7 @@ export default function Register({ passwordRules }: Props) {
                                 <PasswordInput
                                     id="password_confirmation"
                                     required
-                                    tabIndex={4}
+                                    tabIndex={8}
                                     autoComplete="new-password"
                                     name="password_confirmation"
                                     placeholder="Confirm password"
@@ -93,7 +175,7 @@ export default function Register({ passwordRules }: Props) {
                             <Button
                                 type="submit"
                                 className="mt-2 w-full"
-                                tabIndex={5}
+                                tabIndex={9}
                                 data-test="register-user-button"
                             >
                                 {processing && <Spinner />}
@@ -103,7 +185,7 @@ export default function Register({ passwordRules }: Props) {
 
                         <div className="text-muted-foreground text-center text-sm">
                             Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
+                            <TextLink href={login()} tabIndex={10}>
                                 Log in
                             </TextLink>
                         </div>
