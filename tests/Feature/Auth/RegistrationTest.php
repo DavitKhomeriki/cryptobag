@@ -54,12 +54,11 @@ test('new merchants can register and receive an api token', function () {
         'password_confirmation' => 'password',
     ]);
 
-    $plainTextToken = session('merchant_api_token');
+    $apiToken = MerchantApiToken::first();
 
     Queue::assertPushed(RegisterWalletWebhook::class, fn ($job) => $job->walletId === auth()->user()->wallet->id && $job->afterCommit === true);
     $this->assertAuthenticated();
     $response->assertRedirect(route('dashboard', absolute: false));
-    $response->assertSessionHas('merchant_api_token');
     $this->assertDatabaseHas('users', [
         'username' => 'merchantuser',
         'email' => 'merchant@example.com',
@@ -72,9 +71,10 @@ test('new merchants can register and receive an api token', function () {
         'default_callback_url' => 'https://acme.test/webhooks/cryptobag',
     ]);
     $this->assertDatabaseHas('merchant_api_tokens', [
-        'token_hash' => MerchantApiToken::hashToken($plainTextToken),
+        'token_hash' => MerchantApiToken::hashToken($apiToken->token),
         'name' => 'Default API token',
     ]);
+    expect(str_starts_with($apiToken->token, 'cbag_'))->toBeTrue();
 });
 
 test('merchant registration requires a merchant name', function () {

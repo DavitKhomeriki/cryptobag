@@ -1,35 +1,37 @@
-import { Head, router, usePage } from '@inertiajs/react';
-import Header from '@/pages/dashboard/components/Header';
-import Balance from '@/pages/dashboard/components/Balance';
-import SendContainer from '@/pages/dashboard/components/SendContainer';
-import ReceiveContainer from '@/pages/dashboard/components/ReceiveContainer';
-import TransactionContainer from './components/TransactionContainer';
-import { useEffect } from 'react';
-import echo from '@/echo';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { useClipboard } from '@/hooks/use-clipboard';
+import { Head, router, usePage } from "@inertiajs/react";
+import Header from "@/pages/dashboard/components/Header";
+import Balance from "@/pages/dashboard/components/Balance";
+import SendContainer from "@/pages/dashboard/components/SendContainer";
+import ReceiveContainer from "@/pages/dashboard/components/ReceiveContainer";
+import TransactionContainer from "./components/TransactionContainer";
+import { useEffect } from "react";
+import echo from "@/echo";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/use-clipboard";
 
 export default function Dashboard() {
     const [copiedText, copy] = useClipboard();
     const {
         auth,
-        flash,
+        walletId,
+        passphrase,
         bitcoinUsd,
         walletBalance,
         addresses,
         transactions,
         transactionsNextCursor,
+        merchantApiToken,
     } = usePage<{
         auth: any;
-        flash: {
-            merchantApiToken?: string;
-        };
+        walletId: number;
+        passphrase: string;
         bitcoinUsd: number;
         walletBalance: number;
         addresses: any;
         transactions: any;
         transactionsNextCursor: string | null;
+        merchantApiToken?: string | null;
     }>().props;
 
     useEffect(() => {
@@ -43,14 +45,14 @@ export default function Dashboard() {
         const refreshWallet = () => {
             router.reload({
                 only: [
-                    'walletBalance',
-                    'transactions',
-                    'transactionsNextCursor',
+                    "walletBalance",
+                    "transactions",
+                    "transactionsNextCursor",
                 ],
             });
         };
 
-        channel.listen('.wallet.updated', refreshWallet);
+        channel.listen(".wallet.updated", refreshWallet);
 
         return () => {
             echo?.leave(channelName);
@@ -64,24 +66,22 @@ export default function Dashboard() {
                 <Header auth={auth} />
 
                 <main className="mx-auto mt-12 w-full px-10">
-                    {flash.merchantApiToken && (
+                    {merchantApiToken && (
                         <Alert className="mb-8">
                             <AlertTitle>Merchant API token</AlertTitle>
                             <AlertDescription>
                                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center">
                                     <code className="border-input bg-muted text-foreground min-w-0 flex-1 rounded-md border px-3 py-2 text-xs break-all">
-                                        {flash.merchantApiToken}
+                                        {merchantApiToken}
                                     </code>
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={() =>
-                                            copy(flash.merchantApiToken ?? '')
-                                        }
+                                        onClick={() => copy(merchantApiToken)}
                                     >
-                                        {copiedText === flash.merchantApiToken
-                                            ? 'Copied'
-                                            : 'Copy'}
+                                        {copiedText === merchantApiToken
+                                            ? "Copied"
+                                            : "Copy"}
                                     </Button>
                                 </div>
                             </AlertDescription>
@@ -89,6 +89,8 @@ export default function Dashboard() {
                     )}
 
                     <Balance
+                        walletId={walletId}
+                        passphrase={passphrase}
                         bitcoinUsd={bitcoinUsd}
                         walletBalance={walletBalance}
                     />

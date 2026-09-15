@@ -11,9 +11,6 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             name: string;
             auth: Auth;
-            flash: {
-                merchantApiToken?: string;
-            };
             sidebarOpen: boolean;
             [key: string]: unknown;
         };

@@ -77,7 +77,7 @@ class CreateNewUser implements CreatesNewUsers
                     'default_callback_url' => $input['merchant_callback_url'] ?? null,
                 ]);
 
-                session()->flash('merchant_api_token', MerchantApiToken::issueFor($merchant, 'Default API token'));
+                MerchantApiToken::issueFor($merchant, 'Default API token');
             }
 
             return $user;

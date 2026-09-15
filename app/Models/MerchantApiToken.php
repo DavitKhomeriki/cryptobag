@@ -16,18 +16,21 @@ class MerchantApiToken extends Model
     protected $fillable = [
         'merchant_id',
         'name',
+        'token',
         'token_hash',
         'expires_at',
         'revoked_at',
     ];
 
     protected $hidden = [
+        'token',
         'token_hash',
     ];
 
     protected function casts(): array
     {
         return [
+            'token' => 'encrypted',
             'last_used_at' => 'datetime',
             'expires_at' => 'datetime',
             'revoked_at' => 'datetime',
@@ -46,6 +49,7 @@ class MerchantApiToken extends Model
         static::create([
             'merchant_id' => $merchant->id,
             'name' => $name,
+            'token' => $plainTextToken,
             'token_hash' => static::hashToken($plainTextToken),
         ]);
 
