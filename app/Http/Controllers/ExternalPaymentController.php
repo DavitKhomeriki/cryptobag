@@ -7,7 +7,7 @@ use App\Http\Requests\ExternalPaymentRequest;
 use App\Models\ExternalPayment;
 use App\Services\BitGoService;
 use App\Services\ExternalPaymentService;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 
 class ExternalPaymentController extends Controller
 {
@@ -15,7 +15,7 @@ class ExternalPaymentController extends Controller
         ExternalPaymentRequest $request,
         BitGoService $bitGoService,
         ExternalPaymentService $externalPaymentService
-    ): RedirectResponse {
+    ): JsonResponse {
         $idempotencyKey = $request->header('Idempotency-Key');
 
         abort_if(
@@ -42,16 +42,8 @@ class ExternalPaymentController extends Controller
             ]
         );
 
-        // Duplicate request
         if (! $payment->wasRecentlyCreated) {
-            $merchantUser = $externalPaymentService->getMerchant(
-                $payment->address
-            );
-
-            return redirect()->away(
-                $merchantUser->merchant->default_callback_url
-                .'?payment_id='.$payment->id
-            );
+            return $this->paymentResponse($payment);
         }
 
         try {
@@ -73,13 +65,17 @@ class ExternalPaymentController extends Controller
             throw $e;
         }
 
-        $merchantUser = $externalPaymentService->getMerchant(
-            $request->address
-        );
+        return $this->paymentResponse($payment, 201);
+    }
 
-        return redirect()->away(
-            $merchantUser->merchant->default_callback_url
-            .'?payment_id='.$payment->id
-        );
+    private function paymentResponse(ExternalPayment $payment, int $status = 200): JsonResponse
+    {
+        return response()->json([
+            'payment_id' => (string) $payment->id,
+            'order_id' => (string) $payment->order_id_for_merchant,
+            'status' => $payment->status->value,
+            'amount' => $payment->amount,
+            'transfer_id' => $payment->transfer_id,
+        ], $status);
     }
 }

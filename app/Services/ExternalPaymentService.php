@@ -15,7 +15,7 @@ class ExternalPaymentService
     public function getMerchant(string $merchantAddress): User
     {
         return User::with(['merchant', 'wallet'])
-            ->whereHas('wallet.walletaddress', function ($query) use ($merchantAddress) {
+            ->whereHas('wallet.walletAddress', function ($query) use ($merchantAddress) {
                 $query->where('address', $merchantAddress);
             })
             ->firstOrFail();

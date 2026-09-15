@@ -1,11 +1,17 @@
 <?php
 
+use App\Enums\TransactionStatus;
+use App\Enums\UserAccountType;
 use App\Events\WalletUpdated;
+use App\Jobs\DeliverMerchantWebhook;
+use App\Models\ExternalPayment;
+use App\Models\Merchant;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Services\BitGoService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
     Http::preventStrayRequests();
@@ -88,6 +94,67 @@ test('BitGo failures are not acknowledged as successful notifications', function
     ])->assertServerError();
 
     Event::assertNotDispatched(WalletUpdated::class);
+});
+
+test('merchant transfer webhooks update external payments and queue merchant webhooks', function () {
+    Queue::fake([DeliverMerchantWebhook::class]);
+    $user = User::factory()->create(['account_type' => UserAccountType::Merchant]);
+    $wallet = Wallet::factory()->for($user)->create([
+        'bitgo_wallet_id' => 'wallet-123', 'coin' => 'tbtc4', 'passphrase' => 'test-only',
+    ]);
+    $merchant = Merchant::factory()->for($user)->create();
+    $payment = ExternalPayment::create([
+        'idempotency_key' => 'payment-key-123',
+        'order_id_for_merchant' => 'order-123',
+        'wallet_id' => $wallet->id,
+        'address' => 'merchant-address',
+        'amount' => '0.00100000',
+        'status' => TransactionStatus::Pending,
+        'transfer_id' => 'transfer-123',
+    ]);
+    Http::fake([
+        'https://bitgo.test/api/v2/tbtc4/wallet/wallet-123/transfer/transfer-123' => Http::response([
+            'id' => 'transfer-123', 'wallet' => 'wallet-123', 'state' => 'confirmed',
+        ]),
+    ]);
+
+    $this->postJson(route('bitgo.webhook'), [
+        'type' => 'transfer', 'wallet' => 'wallet-123', 'transfer' => 'transfer-123',
+    ])->assertOk()->assertExactJson(['received' => true]);
+
+    expect($payment->refresh()->status)->toBe(TransactionStatus::Completed);
+    Queue::assertPushed(DeliverMerchantWebhook::class, fn (DeliverMerchantWebhook $job) => $job->externalPaymentId === $payment->id
+        && $job->merchantId === $merchant->id);
+});
+
+test('merchant transfer webhooks do not queue merchant webhooks when payment status is unchanged', function () {
+    Queue::fake([DeliverMerchantWebhook::class]);
+    $user = User::factory()->create(['account_type' => UserAccountType::Merchant]);
+    $wallet = Wallet::factory()->for($user)->create([
+        'bitgo_wallet_id' => 'wallet-123', 'coin' => 'tbtc4', 'passphrase' => 'test-only',
+    ]);
+    Merchant::factory()->for($user)->create();
+    $payment = ExternalPayment::create([
+        'idempotency_key' => 'payment-key-123',
+        'order_id_for_merchant' => 'order-123',
+        'wallet_id' => $wallet->id,
+        'address' => 'merchant-address',
+        'amount' => '0.00100000',
+        'status' => TransactionStatus::Pending,
+        'transfer_id' => 'transfer-123',
+    ]);
+    Http::fake([
+        'https://bitgo.test/api/v2/tbtc4/wallet/wallet-123/transfer/transfer-123' => Http::response([
+            'id' => 'transfer-123', 'wallet' => 'wallet-123', 'state' => 'pending',
+        ]),
+    ]);
+
+    $this->postJson(route('bitgo.webhook'), [
+        'type' => 'transfer', 'wallet' => 'wallet-123', 'transfer' => 'transfer-123',
+    ])->assertOk()->assertExactJson(['received' => true]);
+
+    expect($payment->refresh()->status)->toBe(TransactionStatus::Pending);
+    Queue::assertNotPushed(DeliverMerchantWebhook::class);
 });
 
 test('webhook registration uses the configured public callback', function () {
