@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransactionStatus;
 use App\Http\Requests\ExternalPaymentRequest;
 use App\Models\ExternalPayment;
 use App\Services\BitGoService;
@@ -37,7 +38,7 @@ class ExternalPaymentController extends Controller
                 'wallet_id' => $userWallet->id,
                 'address' => $request->address,
                 'amount' => $request->amount,
-                'status' => 'pending',
+                'status' => TransactionStatus::Pending,
             ]
         );
 
@@ -49,19 +50,28 @@ class ExternalPaymentController extends Controller
 
             return redirect()->away(
                 $merchantUser->merchant->default_callback_url
+                .'?payment_id='.$payment->id
             );
         }
 
-        $response = $bitGoService->send(
-            $userWallet,
-            $request->address,
-            (float) $request->amount
-        );
+        try {
+            $response = $bitGoService->send(
+                $userWallet,
+                $request->address,
+                (float) $request->amount
+            );
 
-        $payment->update([
-            'transfer_id' => $response['transfer']['id'],
-            'status' => 'processing',
-        ]);
+            $payment->update([
+                'transfer_id' => $response['transfer']['id'],
+                'status' => TransactionStatus::Pending,
+            ]);
+        } catch (\Throwable $e) {
+            $payment->update([
+                'status' => TransactionStatus::Failed,
+            ]);
+
+            throw $e;
+        }
 
         $merchantUser = $externalPaymentService->getMerchant(
             $request->address
@@ -69,6 +79,7 @@ class ExternalPaymentController extends Controller
 
         return redirect()->away(
             $merchantUser->merchant->default_callback_url
+            .'?payment_id='.$payment->id
         );
     }
 }

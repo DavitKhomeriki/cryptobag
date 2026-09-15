@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TransactionStatus;
 use App\Events\WalletUpdated;
+use App\Models\ExternalPayment;
 use App\Models\Wallet;
 use App\Services\BitGoService;
 use Illuminate\Http\JsonResponse;
@@ -22,13 +24,30 @@ class BitGoWebhookController extends Controller
             return response()->json(['received' => true]);
         }
 
-        $wallet = Wallet::where('bitgo_wallet_id', $data['wallet'])->first();
+        $wallet = Wallet::with('user')->where('bitgo_wallet_id', $data['wallet'])->first();
 
         if (! $wallet) {
             return response()->json(['received' => true]);
         }
 
         $transfer = $bitGoService->transfer($wallet, $data['transfer']);
+
+        if ($wallet->user->type === 'merchant') {
+            $payment = ExternalPayment::where('transfer_id', $data['transfer'])->first();
+            if ($payment) {
+                $status = match ($transfer['state']) {
+                    'confirmed' => TransactionStatus::Completed,
+                    'failed', 'rejected' => TransactionStatus::Failed,
+                    'pending', 'unconfirmed' => TransactionStatus::Pending,
+                    default => TransactionStatus::Pending,
+                };
+
+                $payment->update([
+                    'status' => $status,
+                ]);
+            }
+
+        }
 
         abort_unless(
             ($transfer['id'] ?? null) === $data['transfer']
