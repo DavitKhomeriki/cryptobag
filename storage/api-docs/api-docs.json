@@ -7,11 +7,78 @@
     },
     "servers": [
         {
-            "url": "/api",
-            "description": "Application API"
+            "url": "/",
+            "description": "Application"
         }
     ],
     "paths": {
+        "/api/bitgo/webhook": {
+            "post": {
+                "tags": [
+                    "Internal - BitGo Webhooks"
+                ],
+                "summary": "Receive BitGo transfer webhook",
+                "description": "Internal provider callback used by BitGo. This endpoint is documented for developers only and is not intended for merchant clients.",
+                "operationId": "receiveBitGoWebhook",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "type"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "description": "BitGo webhook event type. Transfer events include wallet and transfer identifiers.",
+                                        "type": "string",
+                                        "example": "transfer"
+                                    },
+                                    "wallet": {
+                                        "description": "BitGo wallet identifier. Required when type is transfer.",
+                                        "type": "string",
+                                        "example": "wallet-123",
+                                        "maxLength": 255
+                                    },
+                                    "transfer": {
+                                        "description": "BitGo transfer identifier. Required when type is transfer.",
+                                        "type": "string",
+                                        "pattern": "^[a-zA-Z0-9_-]+$",
+                                        "example": "transfer-123",
+                                        "maxLength": 255
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Webhook acknowledged",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "received": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid webhook payload or transfer mismatch"
+                    },
+                    "500": {
+                        "description": "BitGo verification failed"
+                    }
+                }
+            }
+        },
         "/api/v1/bitgo/payment": {
             "post": {
                 "tags": [
@@ -118,6 +185,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Internal - BitGo Webhooks",
+            "description": "Provider callbacks used by BitGo. These endpoints are documented for developers only and are not merchant-facing APIs."
+        },
         {
             "name": "Payments",
             "description": "Payments"

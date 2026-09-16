@@ -10,7 +10,11 @@ use OpenApi\Attributes as OA;
     description: 'API documentation for CryptoBag.'
 )]
 #[OA\Server(
-    url: '/api',
-    description: 'Application API'
+    url: '/',
+    description: 'Application'
+)]
+#[OA\Tag(
+    name: 'Internal - BitGo Webhooks',
+    description: 'Provider callbacks used by BitGo. These endpoints are documented for developers only and are not merchant-facing APIs.'
 )]
 class ApiDocumentation {}
