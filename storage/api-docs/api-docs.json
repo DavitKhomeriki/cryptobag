@@ -1,0 +1,126 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "CryptoBag API",
+        "description": "API documentation for CryptoBag.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "Application API"
+        }
+    ],
+    "paths": {
+        "/api/v1/bitgo/payment": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Create an external BitGo payment",
+                "operationId": "createExternalPayment",
+                "parameters": [
+                    {
+                        "name": "Idempotency-Key",
+                        "in": "header",
+                        "description": "Unique key used to safely retry the same payment request.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "payment-key-123"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_id",
+                                    "wallet_id",
+                                    "passphrase",
+                                    "amount",
+                                    "address"
+                                ],
+                                "properties": {
+                                    "order_id": {
+                                        "type": "integer",
+                                        "example": 123
+                                    },
+                                    "wallet_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "passphrase": {
+                                        "type": "string",
+                                        "example": "test-only"
+                                    },
+                                    "amount": {
+                                        "type": "string",
+                                        "example": "0.00100000"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "merchant-address"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Payment created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "payment_id": {
+                                            "type": "string",
+                                            "example": "1"
+                                        },
+                                        "order_id": {
+                                            "type": "string",
+                                            "example": "123"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "pending"
+                                        },
+                                        "amount": {
+                                            "type": "string",
+                                            "example": "0.00100000"
+                                        },
+                                        "transfer_id": {
+                                            "type": "string",
+                                            "example": "transfer-123",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Existing idempotent payment returned"
+                    },
+                    "400": {
+                        "description": "Missing Idempotency-Key header"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Payments",
+            "description": "Payments"
+        }
+    ]
+}
